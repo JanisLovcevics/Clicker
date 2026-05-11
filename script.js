@@ -1,44 +1,87 @@
-let points = 0
-let seq_len = 2
+let points = 0;
+let seq_len = 2;
 
+let user_sequence = [];
+let game_sequence = [];
+let user_turn = false;
 
-const buttons = document.getElementsByClassName("click-btn")
+const buttons = document.getElementsByClassName("click-btn");
+
+// ИСПРАВЛЕНИЕ 1: Используем let вместо var для сохранения контекста индекса
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", () => {
+        // ИСПРАВЛЕНИЕ 2: Вызываем функцию и передаем индекс нажатой кнопки
+        HandleUserClick(i);
+    });
+}
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const ActivateButton = (index) => {
-    buttons[index].classList.add("active-btn")
-    setTimeout(() => {
-        buttons[index].classList.remove("active-btn")
-    }, 1000);
-}
+    buttons[index].classList.add("active-btn");
+};
+
+const DeactivateButton = (index) => {
+    buttons[index].classList.remove("active-btn");
+};
 
 const GenerateSequence = () => {
-    var sequence = [];
+    let sequence = []; // Лучше использовать let вместо var
     while (sequence.length < seq_len) {
-        n = Math.floor(Math.random() * 4)
-        sequence.push(n)
+        let n = Math.floor(Math.random() * 4); // ИСПРАВЛЕНИЕ 3: Добавили let для локальной области видимости
+        sequence.push(n);
     }
     return sequence;
-}
+};
 
-const ResetButtons = () => {
-    for (var btn of buttons) {
-        btn.classList.remove("active-btn")
+const ShowSequence = async () => {
+    game_sequence = GenerateSequence();
+    for (let i = 0; i < game_sequence.length; i++) {
+        ActivateButton(game_sequence[i]);
+        await delay(500);
+        DeactivateButton(game_sequence[i]);
+        await delay(500);
     }
-}
+    user_sequence = []
+    user_turn = true;
+};
 
-const ShowSequence = () => {
-    var btn_sequence = GenerateSequence();
-    for (let i = 0; i < btn_sequence.length; i++) {
-        setTimeout(() => {
-            ActivateButton(btn_sequence[i])
-        }, 1000 * (i + 1))
-        console.log("timeout")
+const HandleUserClick = (index) => {
+    if (!user_turn) {
+        return;
     }
-    console.log("active")
+
+    ActivateButton(index);
+    setTimeout(() => {
+       DeactivateButton(index); 
+    }, 200);
+
+    user_sequence.push(index);
+
+    const current_step = user_sequence.length - 1;
+
+    // Проверка на ошибку
+    if (user_sequence[current_step] != game_sequence[current_step]){
+        console.warn("Dumbass");
+        // Здесь можно добавить сброс игры или уменьшение жизней
+        return;
+    }
+
+    // Проверка на победу в раунде
+    if (user_sequence.length === game_sequence.length){
+        user_turn = false;
+        console.log("win");
+        ShowVictory()
+        return;
+    }
+};
+
+const ShowVictory = () => {
+    const win_p = document.createElement("div")
+    win_p.textContent = "You Win!"
+    document.getElementById("layout").prepend(win_p)
 }
 
-function Game() {
+document.getElementById("start-btn").addEventListener("click", () => {
     ShowSequence()
-}
-
-Game()
+})
