@@ -55,3 +55,37 @@ rb{
 .active-btn{
     transform: scale(1.1);
 }
+
+.clicked-btn {
+    animation: appear_win 0.5s;
+}
+
+@keyframes appear_win {
+    20% {transform: scale(0.9);}
+    70% {transform: scale(1.2);}
+    100% {transform: scale(1);}
+}
+
+.win_p {
+    color: black;
+}
+
+.btns-bg {
+    width: 450px;
+    height: 450px;
+    border: 3px solid green;
+    border-radius: 50px;
+    margin: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.btns-bg-active {
+    background-color: rgb(0, 255, 0, 0.5);
+}
+
+.btns-bg-passive {
+    background-color: rgb(0, 255, 0, 0.1);
+}
