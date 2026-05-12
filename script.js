@@ -1,18 +1,25 @@
-let points = 0;
-let seq_len = 2;
+let seq_len = 1;
 
 let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
+let game_on = false
+
+let buttons_statuses = [true, true, true, true]
 
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
+const victory_div = document.getElementById("victory-div")
+const score_div = document.getElementById("score-div")
+const start_btn = document.getElementById("start-btn")
+
 
 for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", () => {
         HandleUserClick(i);
     });
 }
+
 
 const SetButtonsBackground = (status) => {
     if (!status) {
@@ -25,20 +32,43 @@ const SetButtonsBackground = (status) => {
     }
 }
 
+
+const ShowScore = () => {
+    score_div.innerText = `Your score is ${seq_len}`
+}
+
+
+const HideScore = () => {
+    score_div.innerText = ""
+}
+
+
 const delay = ms => new Promise(res => setTimeout(res, ms));
+
 
 const ActivateButton = (index) => {
     buttons[index].classList.add("active-btn");
 };
 
+
 const ClickButton = (index) => {
     buttons[index].classList.add("clicked-btn");
 }
+
 
 const DeactivateButton = (index) => {
     buttons[index].classList.remove("active-btn");
     buttons[index].classList.remove("clicked-btn")
 };
+
+
+const MakeButtonNotClickableForTime = (index, time) => {
+    buttons_statuses[index] = false
+    setTimeout(() => {
+        buttons_statuses[index] = true
+    }, time);
+}
+
 
 const GenerateSequence = () => {
     let sequence = [];
@@ -48,6 +78,7 @@ const GenerateSequence = () => {
     }
     return sequence;
 };
+
 
 const ShowSequence = async () => {
     user_turn = false
@@ -64,12 +95,17 @@ const ShowSequence = async () => {
     SetButtonsBackground(user_turn)
 };
 
+
 const HandleUserClick = (index) => {
     if (!user_turn) {
         return;
     }
+    if (buttons_statuses[index] === false){
+        return
+    }
 
     ClickButton(index);
+    MakeButtonNotClickableForTime(index, 500)
     setTimeout(() => {
        DeactivateButton(index);
     }, 500);
@@ -78,28 +114,46 @@ const HandleUserClick = (index) => {
 
     const current_step = user_sequence.length - 1;
 
+    start_btn.innerText = "Next"
+
+    game_on = false
+
     if (user_sequence[current_step] != game_sequence[current_step]){
-        console.warn("Dumbass");
-        seq_len = 2
+        user_turn = false
+        ShowVictory(false)
+        SetButtonsBackground(user_turn)
+        HideScore()
+        seq_len = 1
         return;
     }
 
-    // Проверка на победу в раунде
     if (user_sequence.length === game_sequence.length){
         user_turn = false;
-        ShowVictory()
+        ShowVictory(true)
+        SetButtonsBackground(user_turn)
+        ShowScore()
         seq_len++
         return;
     }
 };
 
-const ShowVictory = () => {
-    const win_p = document.createElement("div")
-    win_p.textContent = "You Win!"
-    win_p.classList.add("win_p")
-    document.getElementById("layout").prepend(win_p)
+
+const ShowVictory = (isWin) => {
+    if (isWin){
+    victory_div.innerText = "You Win"
+    }
+    else {
+        victory_div.innerText = "You Lose"
+    }
 }
 
-document.getElementById("start-btn").addEventListener("click", () => {
-    ShowSequence()
+
+start_btn.addEventListener("click", () => {
+    if (!game_on){
+        ShowSequence()
+        game_on = true
+    }
+    else {
+        return
+    }
 })

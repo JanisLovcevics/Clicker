@@ -89,3 +89,15 @@ rb{
 .btns-bg-passive {
     background-color: rgb(0, 255, 0, 0.1);
 }
+
+#start-btn {
+    width: 150px;
+    height: 60px;
+    border-radius: 20px;
+    border: 1px solid black;
+    transition: 0.15s;
+}
+
+#start-btn:active {
+    background-color: gray;
+}
