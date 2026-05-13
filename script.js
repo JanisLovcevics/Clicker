@@ -98,6 +98,7 @@ const ShowSequence = async () => {
     user_turn = false
     SetButtonsBackground(user_turn)
     game_sequence = GenerateSequence();
+    await delay(200);
     for (let i = 0; i < game_sequence.length; i++) {
         ActivateButton(game_sequence[i]);
         await delay(500);

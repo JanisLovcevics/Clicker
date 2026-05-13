@@ -2,6 +2,10 @@ body {
     background-color: lightgray;
 }
 
+* {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .layout {
     display: flex;
     flex-direction: column;
@@ -57,10 +61,10 @@ rb{
 }
 
 .clicked-btn {
-    animation: appear_win 0.5s;
+    animation: click 0.5s;
 }
 
-@keyframes appear_win {
+@keyframes click {
     20% {transform: scale(0.9);}
     70% {transform: scale(1.2);}
     100% {transform: scale(1);}
@@ -94,8 +98,10 @@ rb{
     width: 150px;
     height: 60px;
     border-radius: 20px;
-    border: 1px solid black;
     transition: 0.15s;
+    border: none;
+    background-color: lightgreen;
+    cursor: pointer;
 }
 
 #start-btn:active {
