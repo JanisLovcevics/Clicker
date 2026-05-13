@@ -101,3 +101,11 @@ rb{
 #start-btn:active {
     background-color: gray;
 }
+
+.btn-pointer {
+    cursor: pointer;
+}
+
+.btn-pointer:hover {
+    transform: scale(1.05);
+}

@@ -33,6 +33,20 @@ const SetButtonsBackground = (status) => {
 }
 
 
+const EnableButtons = () => {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.add("btn-pointer");
+    }
+};
+
+
+const DisableButtons = () => {
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove("btn-pointer");
+    }
+};
+
+
 const ShowScore = () => {
     score_div.innerText = `Your score is ${seq_len}`
 }
@@ -92,6 +106,7 @@ const ShowSequence = async () => {
     }
     user_sequence = []
     user_turn = true;
+    EnableButtons()
     SetButtonsBackground(user_turn)
 };
 
@@ -124,6 +139,7 @@ const HandleUserClick = (index) => {
         SetButtonsBackground(user_turn)
         HideScore()
         seq_len = 1
+        DisableButtons()
         return;
     }
 
@@ -133,6 +149,7 @@ const HandleUserClick = (index) => {
         SetButtonsBackground(user_turn)
         ShowScore()
         seq_len++
+        DisableButtons()
         return;
     }
 };
