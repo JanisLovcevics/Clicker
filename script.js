@@ -1,5 +1,6 @@
 let seq_len = 1;
 
+/// <reference path="style.css" />
 let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
