@@ -1,13 +1,21 @@
+let level = 1;
 let seq_len = 1;
+let score = 0;
 
-/// <reference path="style.css" />
 let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
 let game_on = false
 
+const level_improvements = {
+    5: () => {
+        improvements[0].classList.add("impro-act")
+    }
+}
+
 let buttons_statuses = [true, true, true, true]
 
+const improvements = document.getElementById("improvements").children
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
 const victory_div = document.getElementById("victory-div")
@@ -163,6 +171,7 @@ const ShowVictory = (isWin) => {
     }
     else {
         victory_div.innerText = "You Lose"
+        start_btn.innerText = "Retry"
     }
 }
 
