@@ -2,10 +2,14 @@ let level = 1;
 let seq_len = 1;
 let score = 0;
 
+let adding_score = 1;
+
 let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
 let game_on = false
+
+let buttons_Listeners = []
 
 const level_improvements = {
     5: () => {
@@ -15,7 +19,7 @@ const level_improvements = {
 
 let buttons_statuses = [true, true, true, true]
 
-const improvements = document.getElementById("improvements").children
+const improvements = document.querySelector(".improvements").children
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
 const victory_div = document.getElementById("victory-div")
@@ -23,10 +27,24 @@ const score_div = document.getElementById("score-div")
 const start_btn = document.getElementById("start-btn")
 
 
-for (let i = 0; i < buttons.length; i++) {
-    buttons[i].addEventListener("click", () => {
-        HandleUserClick(i);
-    });
+const AddEventToButtons = (_buttons) => {
+    for (let i = 0; i < _buttons.length; i++) {
+        const clickHandler = () => {
+            HandleUserClick(i);
+        }
+    
+        buttons_Listeners[i] = clickHandler
+        
+        _buttons[i].addEventListener("click", clickHandler)
+    }
+}
+
+AddEventToButtons(buttons)
+
+const RemoveEventFromButtons = (_buttons) => {
+    for (let i = 0; i < _buttons.length; i++) {
+        _buttons[i].removeEventListener("click", buttons_Listeners[i])
+    }
 }
 
 
@@ -103,6 +121,26 @@ const GenerateSequence = () => {
 };
 
 
+const HideButtonsExcept = (_buttons, index) => {
+    for (let i = 0; i < _buttons.length; i++) {
+        if (i != index) {
+            _buttons[i].classList.add("btn-hide")
+            setTimeout(() => {
+                _buttons[i].style.display = "none"
+            }, 200)
+        }
+    }
+
+    _buttons[index].classList.add("btn-stretch")
+}
+
+
+const DoPostRoundActivities = () => {
+    /*if (level in level_improvements) {
+        level_improvements[level]()
+    }*/
+}
+
 const ShowSequence = async () => {
     user_turn = false
     SetButtonsBackground(user_turn)
@@ -149,7 +187,9 @@ const HandleUserClick = (index) => {
         SetButtonsBackground(user_turn)
         HideScore()
         seq_len = 1
+        level = 1;
         DisableButtons()
+        DoPostRoundActivities()
         return;
     }
 
@@ -159,7 +199,10 @@ const HandleUserClick = (index) => {
         SetButtonsBackground(user_turn)
         ShowScore()
         seq_len++
+        level++;
+        score += adding_score;
         DisableButtons()
+        DoPostRoundActivities()
         return;
     }
 };
