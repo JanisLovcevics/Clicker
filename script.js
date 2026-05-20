@@ -122,16 +122,32 @@ const GenerateSequence = () => {
 
 
 const HideButtonsExcept = (_buttons, index) => {
+    const btn = _buttons[index];
+
+    const btnRect = btn.getBoundingClientRect();
+    const parentRect = btns_bg.getBoundingClientRect();
+
+    const startTop = btnRect.top - parentRect.top;
+    const startLeft = btnRect.left - parentRect.left;
+
+    btn.style.position = 'absolute';
+    btn.style.top = startTop + 'px';
+    btn.style.left = startLeft + 'px';
+    btn.style.width = btnRect.width + 'px';
+    btn.style.height = btnRect.height + 'px';
+
     for (let i = 0; i < _buttons.length; i++) {
         if (i != index) {
-            _buttons[i].classList.add("btn-hide")
+            _buttons[i].classList.add("btn-hide");
             setTimeout(() => {
-                _buttons[i].style.display = "none"
-            }, 200)
+                _buttons[i].style.display = "none";
+            }, 200);
         }
     }
 
-    _buttons[index].classList.add("btn-stretch")
+    void btn.offsetWidth; 
+
+    btn.classList.add("btn-stretch");
 }
 
 
@@ -167,7 +183,9 @@ const HandleUserClick = (index) => {
         return
     }
 
-    ClickButton(index);
+    HideButtonsExcept(buttons, index)
+
+    /*ClickButton(index);
     MakeButtonNotClickableForTime(index, 500)
     setTimeout(() => {
        DeactivateButton(index);
@@ -204,7 +222,7 @@ const HandleUserClick = (index) => {
         DisableButtons()
         DoPostRoundActivities()
         return;
-    }
+    }*/
 };
 
 

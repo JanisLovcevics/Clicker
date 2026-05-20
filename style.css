@@ -173,7 +173,7 @@ body {
     opacity: 0%;
 }
 
-.btn-stretch {
+/*.btn-stretch {
     position: absolute;
     top: 0;
     left: 0;
@@ -181,4 +181,21 @@ body {
     height: 100%;
     border-radius: 40px;
     z-index: -1;
+    animation-name: btn-bg-showing;
+    animation-duration: 1s;
+    transition: 0s;
+}*/
+
+.btn-stretch {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 40px !important; /* Скругляем под форму .btns-bg */
+    z-index: 10 !important; /* Изменил -1 на 10, чтобы кнопка точно была поверх всего */
+}
+
+@keyframes btn-bg-showing {
+    0% {opacity: 0%;}
+    100% {opacity: 100%;}
 }
