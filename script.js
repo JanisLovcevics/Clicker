@@ -122,6 +122,7 @@ const GenerateSequence = () => {
 
 
 const HideButtonsExcept = (_buttons, index) => {
+    user_turn = false
     const btn = _buttons[index];
 
     const btnRect = btn.getBoundingClientRect();
@@ -147,7 +148,21 @@ const HideButtonsExcept = (_buttons, index) => {
 
     void btn.offsetWidth; 
 
+    btn.classList.remove("btn-pointer")
     btn.classList.add("btn-stretch");
+}
+
+
+const CatchNumber = (index) => {
+    const parentBtn = buttons[index]
+    const number_display = document.createElement("div")
+    number_display.classList.add("number-display")
+
+    const answer = Math.floor(Math.random() * 10)
+
+
+    number_display.innerText = answer
+    parentBtn.prepend(number_display)
 }
 
 
@@ -156,6 +171,7 @@ const DoPostRoundActivities = () => {
         level_improvements[level]()
     }*/
 }
+
 
 const ShowSequence = async () => {
     user_turn = false
@@ -189,12 +205,13 @@ const HandleUserClick = (index) => {
     MakeButtonNotClickableForTime(index, 500)
     setTimeout(() => {
        DeactivateButton(index);
-    }, 500);
+    }, 500);*/
 
     user_sequence.push(index);
-
+    CatchNumber(index)
+ /*
     const current_step = user_sequence.length - 1;
-
+    
     start_btn.innerText = "Next"
 
     game_on = false

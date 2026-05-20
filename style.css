@@ -191,11 +191,16 @@ body {
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    border-radius: 40px !important; /* Скругляем под форму .btns-bg */
-    z-index: 10 !important; /* Изменил -1 на 10, чтобы кнопка точно была поверх всего */
+    border-radius: 40px !important;
+    z-index: -1 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-@keyframes btn-bg-showing {
-    0% {opacity: 0%;}
-    100% {opacity: 100%;}
+.number-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
 }
