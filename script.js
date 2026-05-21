@@ -166,6 +166,99 @@ const CatchNumber = (index) => {
 }
 
 
+const Directions = Object.freeze({
+    UP: "UP",
+    DOWN: "DOWN",
+    LEFT: "LEFT",
+    RIGHT: "RIGHT"
+})
+
+
+let pacman_direction = Directions.RIGHT
+
+
+const pacmanGrid = [
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+]
+
+let pacman_coords = [2, 7]
+let prev_pacman_coords = []
+
+
+const CreateRectangle = (color) => {
+    const rect = document.createElement("div")
+    rect.classList.add("pacman-rect")
+    rect.style.backgroundColor = color
+    return rect
+}
+
+
+const Pacman = async (index) => {
+    const parentBtn = buttons[index]
+    const pacman_bg = document.createElement("div")
+    pacman_bg.classList.add("pacman-bg")
+    
+
+    pacmanGrid.forEach((row) => {
+        row.forEach((cell) => {
+            let value;
+            if (cell == 1) {
+                value = CreateRectangle("blue")
+            }
+            else {
+                value = CreateRectangle("black")
+            }
+            pacman_bg.append(value)
+        })
+    })
+
+    parentBtn.prepend(pacman_bg)
+    DrawPacman(pacman_bg)
+    await delay(1000)
+    MovePacman()
+    DrawPacman(pacman_bg)
+}
+
+
+const MovePacman = () => {
+    prev_pacman_coords[0] = pacman_coords[0]
+    prev_pacman_coords[1] = pacman_coords[1]
+    switch (pacman_direction){
+        case (Directions.UP) :
+            pacman_coords[1] -= 1
+            break
+        case (Directions.DOWN):
+            pacman_coords[1] -= 1
+            break
+        case (Directions.LEFT):
+            pacman_coords[0] -= 1
+            break
+        case (Directions.RIGHT):
+            pacman_coords[0] += 1
+            break
+    }
+}
+
+
+const DrawPacman = (_pacman_bg) => {
+    if (prev_pacman_coords.length > 0){
+        _pacman_bg.children[(prev_pacman_coords[1] - 1) * 10 + (prev_pacman_coords[0] - 1)].style.backgroundColor = "black"
+    }
+    const rects = _pacman_bg.children[(pacman_coords[1] - 1) * 10 + (pacman_coords[0] - 1)]
+    rects.style.backgroundColor = "yellow"
+    rects.classList.add("pacman")
+}
+
+
 const DoPostRoundActivities = () => {
     /*if (level in level_improvements) {
         level_improvements[level]()
@@ -208,7 +301,7 @@ const HandleUserClick = (index) => {
     }, 500);*/
 
     user_sequence.push(index);
-    CatchNumber(index)
+    Pacman(index)
  /*
     const current_step = user_sequence.length - 1;
     
