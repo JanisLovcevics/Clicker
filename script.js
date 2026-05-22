@@ -190,8 +190,15 @@ const pacmanGrid = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
-let pacman_coords = [2, 7]
+let pacman_coords = [1, 9]
 let prev_pacman_coords = []
+let target_coords = []
+
+
+const GeneratePacmanTarget = (_pacman_bg) => {
+    target_coords = [Math.floor(Math.random() * 9), Math.floor(Math.random() * 9)]
+    _pacman_bg.children[(target_coords[1]) * 10 + (target_coords[0])].style.backgroundColor = "red"
+}
 
 
 const CreateRectangle = (color) => {
@@ -200,6 +207,20 @@ const CreateRectangle = (color) => {
         rect.style.backgroundColor = color
     }
     return rect
+}
+
+
+const StopPacman = (index) => {
+    for (let i = 0; i < buttons.length; i++) {
+        if (i != index) {
+            buttons[i].classList.remove("btn-hide")
+        }
+        else {
+            buttons[i].classList.remove("btn-stretch")
+        }
+        buttons[i].classList.add("btn-pointer")
+        buttons[i].style.display = "block"
+    }
 }
 
 
@@ -224,6 +245,7 @@ const Pacman = async (index) => {
 
     parentBtn.prepend(pacman_bg)
     DrawPacman(pacman_bg)
+    GeneratePacmanTarget(pacman_bg)
 
     document.addEventListener('keydown', (event) => {
         switch (event.code){
@@ -247,6 +269,10 @@ const Pacman = async (index) => {
     const pacman_movement = setInterval(() => {
         MovePacman()
         DrawPacman(pacman_bg)
+        if (pacman_coords[0] == target_coords[0] && pacman_coords[1] == target_coords[1]) {
+            clearInterval(pacman_movement)
+            StopPacman(index)
+        }
     }, 300)
 }
 
@@ -268,12 +294,11 @@ const MovePacman = () => {
             next_pacman_coords[0] += 1
             break
     }
-    if (pacmanGrid[next_pacman_coords[1]][next_pacman_coords[0]] == 0){
-        console.log(next_pacman_coords[0], next_pacman_coords[1], pacmanGrid[next_pacman_coords[0]][next_pacman_coords[1]])
-        pacman_coords = [...next_pacman_coords]
+    if (next_pacman_coords[0] > 9 || next_pacman_coords[1] > 9 || next_pacman_coords[0] < 0 || next_pacman_coords[1] < 0 || pacmanGrid[next_pacman_coords[1]][next_pacman_coords[0]] == 1){
+        return
     }
     else {
-        console.log("collision")
+        pacman_coords = [...next_pacman_coords]
     }
 }
 
