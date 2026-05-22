@@ -196,8 +196,9 @@ let prev_pacman_coords = []
 
 const CreateRectangle = (color) => {
     const rect = document.createElement("div")
-    rect.classList.add("pacman-rect")
-    rect.style.backgroundColor = color
+    if (color != null){
+        rect.style.backgroundColor = color
+    }
     return rect
 }
 
@@ -215,7 +216,7 @@ const Pacman = async (index) => {
                 value = CreateRectangle("blue")
             }
             else {
-                value = CreateRectangle("black")
+                value = CreateRectangle()
             }
             pacman_bg.append(value)
         })
@@ -223,37 +224,65 @@ const Pacman = async (index) => {
 
     parentBtn.prepend(pacman_bg)
     DrawPacman(pacman_bg)
-    await delay(1000)
-    MovePacman()
+
+    document.addEventListener('keydown', (event) => {
+        switch (event.code){
+            case ("KeyW"):
+                pacman_direction = Directions.UP
+                break
+            case ("KeyS"):
+                pacman_direction = Directions.DOWN
+                break
+            case ("KeyA"):
+                pacman_direction = Directions.LEFT
+                break
+            case ("KeyD"):
+                pacman_direction = Directions.RIGHT
+                break
+        }
+    })
+
     DrawPacman(pacman_bg)
+
+    const pacman_movement = setInterval(() => {
+        MovePacman()
+        DrawPacman(pacman_bg)
+    }, 300)
 }
 
 
 const MovePacman = () => {
-    prev_pacman_coords[0] = pacman_coords[0]
-    prev_pacman_coords[1] = pacman_coords[1]
+    prev_pacman_coords = [...pacman_coords]
+    next_pacman_coords = [...pacman_coords]
     switch (pacman_direction){
         case (Directions.UP) :
-            pacman_coords[1] -= 1
+            next_pacman_coords[1] -= 1
             break
         case (Directions.DOWN):
-            pacman_coords[1] -= 1
+            next_pacman_coords[1] += 1
             break
         case (Directions.LEFT):
-            pacman_coords[0] -= 1
+            next_pacman_coords[0] -= 1
             break
         case (Directions.RIGHT):
-            pacman_coords[0] += 1
+            next_pacman_coords[0] += 1
             break
+    }
+    if (pacmanGrid[next_pacman_coords[1]][next_pacman_coords[0]] == 0){
+        console.log(next_pacman_coords[0], next_pacman_coords[1], pacmanGrid[next_pacman_coords[0]][next_pacman_coords[1]])
+        pacman_coords = [...next_pacman_coords]
+    }
+    else {
+        console.log("collision")
     }
 }
 
 
 const DrawPacman = (_pacman_bg) => {
     if (prev_pacman_coords.length > 0){
-        _pacman_bg.children[(prev_pacman_coords[1] - 1) * 10 + (prev_pacman_coords[0] - 1)].style.backgroundColor = "black"
+        _pacman_bg.children[(prev_pacman_coords[1]) * 10 + (prev_pacman_coords[0])].style.backgroundColor = "black"
     }
-    const rects = _pacman_bg.children[(pacman_coords[1] - 1) * 10 + (pacman_coords[0] - 1)]
+    const rects = _pacman_bg.children[(pacman_coords[1]) * 10 + (pacman_coords[0])]
     rects.style.backgroundColor = "yellow"
     rects.classList.add("pacman")
 }
