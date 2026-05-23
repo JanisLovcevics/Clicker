@@ -170,7 +170,8 @@ const Directions = Object.freeze({
     UP: "UP",
     DOWN: "DOWN",
     LEFT: "LEFT",
-    RIGHT: "RIGHT"
+    RIGHT: "RIGHT",
+    NONE: "NONE"
 })
 
 
@@ -178,17 +179,17 @@ let pacman_direction = Directions.RIGHT
 
 
 const pacmanGrid = [
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 0, 1, 1, 0, 0, 1, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 1, 0, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
 
 let pacman_coords = [1, 9]
 let prev_pacman_coords = []
@@ -210,16 +211,32 @@ const CreateRectangle = (color) => {
 }
 
 
-const StopPacman = (index) => {
+const StopPacman = async (index, _pacman_bg) => {
+    buttons[index].style.transition = "0.5s"
+
+    buttons.forEach((_btn) => {
+        _btn.style.opacity = "0";
+    })
+
+    await delay(500)
+
+    _pacman_bg.remove()
+    buttons[index].style.position = "";
+    buttons[index].style.top = "";
+    buttons[index].style.left = "";
+    buttons[index].style.width = "";
+    buttons[index].style.height = "";
+    buttons[index].style.opacity = "";
+    buttons[index].style.transition = "";
+ 
     for (let i = 0; i < buttons.length; i++) {
-        if (i != index) {
-            buttons[i].classList.remove("btn-hide")
+        if (i !== index) {
+            buttons[i].classList.remove("btn-hide");
+            buttons[i].style.display = "";
+        } else {
+            buttons[i].classList.remove("btn-stretch");
         }
-        else {
-            buttons[i].classList.remove("btn-stretch")
-        }
-        buttons[i].classList.add("btn-pointer")
-        buttons[i].style.display = "block"
+        buttons[i].classList.add("btn-pointer");
     }
 }
 
@@ -261,6 +278,9 @@ const Pacman = async (index) => {
             case ("KeyD"):
                 pacman_direction = Directions.RIGHT
                 break
+            default:
+                pacman_direction = Directions.NONE
+                break
         }
     })
 
@@ -271,7 +291,7 @@ const Pacman = async (index) => {
         DrawPacman(pacman_bg)
         if (pacman_coords[0] == target_coords[0] && pacman_coords[1] == target_coords[1]) {
             clearInterval(pacman_movement)
-            StopPacman(index)
+            StopPacman(index, pacman_bg)
         }
     }, 300)
 }
