@@ -13,13 +13,13 @@ let buttons_Listeners = []
 
 const level_improvements = {
     5: () => {
-        improvements[0].classList.add("impro-act")
+        improvement_elements[0].classList.add("impro-act")
     }
 }
 
 let buttons_statuses = [true, true, true, true]
 
-const improvements = document.querySelector(".improvements").children
+const improvement_elements = document.querySelector(".improvements").children
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
 const victory_div = document.getElementById("victory-div")
@@ -154,12 +154,12 @@ const HideButtonsExcept = (_buttons, index) => {
 
 
 const CatchNumber = (index) => {
+    HideButtonsExcept(buttons, index)
     const parentBtn = buttons[index]
     const number_display = document.createElement("div")
     number_display.classList.add("number-display")
 
     const answer = Math.floor(Math.random() * 10)
-
 
     number_display.innerText = answer
     parentBtn.prepend(number_display)
@@ -191,13 +191,31 @@ const pacmanGrid = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
+
 let pacman_coords = [1, 9]
 let prev_pacman_coords = []
 let target_coords = []
 
 
+const GeneratePossibleTargetCoords = () => {
+    let _possible_target_coords = []
+    for ( let i = 0; i < pacmanGrid.length; i++) {
+        for ( let j = 0; j < pacmanGrid[i].length; j++) {
+            if (pacmanGrid[i][j] == 0) {
+                _possible_target_coords.push([j, i])
+            }
+        }
+    }
+
+    return _possible_target_coords
+}
+
+
+let possible_target_coords = GeneratePossibleTargetCoords()
+
+
 const GeneratePacmanTarget = (_pacman_bg) => {
-    target_coords = [Math.floor(Math.random() * 9), Math.floor(Math.random() * 9)]
+    target_coords = possible_target_coords[Math.floor(Math.random() * possible_target_coords.length)]
     _pacman_bg.children[(target_coords[1]) * 10 + (target_coords[0])].style.backgroundColor = "red"
 }
 
@@ -212,11 +230,10 @@ const CreateRectangle = (color) => {
 
 
 const StopPacman = async (index, _pacman_bg) => {
-    buttons[index].style.transition = "0.5s"
 
-    buttons.forEach((_btn) => {
-        _btn.style.opacity = "0";
-    })
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].style.opacity = "0"
+    }
 
     await delay(500)
 
@@ -226,17 +243,21 @@ const StopPacman = async (index, _pacman_bg) => {
     buttons[index].style.left = "";
     buttons[index].style.width = "";
     buttons[index].style.height = "";
-    buttons[index].style.opacity = "";
-    buttons[index].style.transition = "";
- 
+    
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].style.display = ""
+    }
+
+    void btns_bg.offsetWidth
+
     for (let i = 0; i < buttons.length; i++) {
         if (i !== index) {
             buttons[i].classList.remove("btn-hide");
-            buttons[i].style.display = "";
         } else {
             buttons[i].classList.remove("btn-stretch");
         }
         buttons[i].classList.add("btn-pointer");
+        buttons[i].style.opacity = ""
     }
 }
 
@@ -334,9 +355,11 @@ const DrawPacman = (_pacman_bg) => {
 
 
 const DoPostRoundActivities = () => {
-    /*if (level in level_improvements) {
+    SetButtonsBackground(user_turn)
+    DisableButtons()
+    if (level in level_improvements) {
         level_improvements[level]()
-    }*/
+    }
 }
 
 
@@ -366,17 +389,14 @@ const HandleUserClick = (index) => {
         return
     }
 
-    HideButtonsExcept(buttons, index)
-
-    /*ClickButton(index);
+    ClickButton(index);
     MakeButtonNotClickableForTime(index, 500)
     setTimeout(() => {
        DeactivateButton(index);
-    }, 500);*/
+    }, 500);
 
     user_sequence.push(index);
-    Pacman(index)
- /*
+ 
     const current_step = user_sequence.length - 1;
     
     start_btn.innerText = "Next"
@@ -386,11 +406,9 @@ const HandleUserClick = (index) => {
     if (user_sequence[current_step] != game_sequence[current_step]){
         user_turn = false
         ShowVictory(false)
-        SetButtonsBackground(user_turn)
         HideScore()
         seq_len = 1
         level = 1;
-        DisableButtons()
         DoPostRoundActivities()
         return;
     }
@@ -398,15 +416,13 @@ const HandleUserClick = (index) => {
     if (user_sequence.length === game_sequence.length){
         user_turn = false;
         ShowVictory(true)
-        SetButtonsBackground(user_turn)
         ShowScore()
         seq_len++
         level++;
         score += adding_score;
-        DisableButtons()
         DoPostRoundActivities()
         return;
-    }*/
+    }
 };
 
 
