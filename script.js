@@ -8,12 +8,18 @@ let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
 let game_on = false
+let catch_num_on = false
 
 let buttons_Listeners = []
 
 const level_improvements = {
     5: () => {
-        improvement_elements[0].classList.add("impro-act")
+        catch_num_btn = improvement_elements[0]
+        catch_num_btn.classList.add("impro-act")
+        catch_num_btn.addEventListener("click", () => {
+            catch_num_on = true
+            catch_num_on.style.display = "none"
+        })
     }
 }
 
@@ -96,10 +102,15 @@ const ClickButton = (index) => {
     buttons[index].classList.add("clicked-btn");
 }
 
+const FastClickButton = (index) => {
+    buttons[index].classList.add("fast-clicked-btn");
+}
+
 
 const DeactivateButton = (index) => {
     buttons[index].classList.remove("active-btn");
     buttons[index].classList.remove("clicked-btn")
+    buttons[index].classList.remove("fast-clicked-btn")
 };
 
 
@@ -154,13 +165,30 @@ const HideButtonsExcept = (_buttons, index) => {
 
 
 const CatchNumber = (index) => {
+    const ClickButtonInCatchNumber = () => {
+        FastClickButton(index);
+        setTimeout(() => {
+            DeactivateButton(index);
+        }, 50);
+
+        answer--;
+        number_display.innerText = answer
+
+        if (answer == 0) {
+            StopMiniGame(index)
+            number_display.remove()
+            buttons[index].removeEventListener("mousedown", ClickButtonInCatchNumber)
+            console.log(user_turn)
+        }
+    }
+
+    buttons[index].addEventListener("mousedown", ClickButtonInCatchNumber)
     HideButtonsExcept(buttons, index)
     const parentBtn = buttons[index]
     const number_display = document.createElement("div")
     number_display.classList.add("number-display")
 
-    const answer = Math.floor(Math.random() * 10)
-
+    let answer = Math.floor(Math.random() * 10)
     number_display.innerText = answer
     parentBtn.prepend(number_display)
 }
@@ -229,21 +257,19 @@ const CreateRectangle = (color) => {
 }
 
 
-const StopPacman = async (index, _pacman_bg) => {
-
+const StopMiniGame = async (index) => {
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].style.opacity = "0"
     }
 
     await delay(500)
 
-    _pacman_bg.remove()
     buttons[index].style.position = "";
     buttons[index].style.top = "";
     buttons[index].style.left = "";
     buttons[index].style.width = "";
     buttons[index].style.height = "";
-    
+
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].style.display = ""
     }
@@ -259,6 +285,12 @@ const StopPacman = async (index, _pacman_bg) => {
         buttons[i].classList.add("btn-pointer");
         buttons[i].style.opacity = ""
     }
+}
+
+
+const StopPacman = async (index, _pacman_bg) => {
+    StopMiniGame(index)
+    _pacman_bg.remove()
 }
 
 
