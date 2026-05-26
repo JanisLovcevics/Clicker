@@ -18,7 +18,7 @@ const level_improvements = {
         catch_num_btn.classList.add("impro-act")
         catch_num_btn.addEventListener("click", () => {
             catch_num_on = true
-            catch_num_on.style.display = "none"
+            catch_num_btn.style.display = "none"
         })
     }
 }
