@@ -9,23 +9,45 @@ let game_sequence = [];
 let user_turn = false;
 let game_on = false
 let catch_num_on = false
+let mini_game_chance = 0
+let mini_games_chances = [
+    {run : (index) => {
+        CatchNumber(index)
+    }, chance : 0},
+    {run : (index) => {
+        Pacman(index)
+    }, chance : 0}
+]
+
+
 
 let buttons_Listeners = []
 
 const level_improvements = {
     5: () => {
-        catch_num_btn = improvement_elements[0]
-        catch_num_btn.classList.add("impro-act")
+        catch_num_btn = new_games_adding_btns[0]
+        catch_num_btn.style.display = "block"
         catch_num_btn.addEventListener("click", () => {
-            catch_num_on = true
+            mini_games_chances[0].chance = 50
+            seq_len = 2
             catch_num_btn.style.display = "none"
+            mini_game_chance = 30
+        })
+    },
+    10: () => {
+        pacman_btn = new_games_adding_btns[1]
+        pacman_btn.style.display = "block"
+        pacman_btn.addEventListener("click", () => {
+            mini_games_chances[1].chance = 30
+            seq_len = 3
+            pacman_btn.style.display = "none"
         })
     }
 }
 
 let buttons_statuses = [true, true, true, true]
 
-const improvement_elements = document.querySelector(".improvements").children
+const new_games_adding_btns = document.querySelector(".improvements").children
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
 const victory_div = document.getElementById("victory-div")
@@ -81,7 +103,7 @@ const DisableButtons = () => {
 
 
 const ShowScore = () => {
-    score_div.innerText = `Your score is ${seq_len}`
+    score_div.innerText = `Your score is ${level}`
 }
 
 
@@ -165,7 +187,7 @@ const HideButtonsExcept = (_buttons, index) => {
 
 
 const CatchNumber = (index) => {
-    const ClickButtonInCatchNumber = () => {
+    const ClickButtonInCatchNumber = async () => {
         FastClickButton(index);
         setTimeout(() => {
             DeactivateButton(index);
@@ -174,11 +196,10 @@ const CatchNumber = (index) => {
         answer--;
         number_display.innerText = answer
 
-        if (answer == 0) {
+        if (answer <= 0) {
             StopMiniGame(index)
             number_display.remove()
             buttons[index].removeEventListener("mousedown", ClickButtonInCatchNumber)
-            console.log(user_turn)
         }
     }
 
@@ -188,9 +209,30 @@ const CatchNumber = (index) => {
     const number_display = document.createElement("div")
     number_display.classList.add("number-display")
 
-    let answer = Math.floor(Math.random() * 10)
+    let answer = Math.floor(Math.random() * (10 - 1) + 1)
     number_display.innerText = answer
     parentBtn.prepend(number_display)
+}
+
+
+const TryToStartMiniGame = (chance, index) => {
+    if (chance === 0) {
+        return
+    }
+
+    let roll = Math.random() * 100
+    if (roll <= chance) {
+        max_chance = mini_games_chances.reduce((sum, mini_game) => sum + mini_game.chance, 0)
+        random_chance = Math.random() * max_chance
+        for (let mini_game of mini_games_chances) {
+            if (random_chance < mini_game.chance) {
+                mini_game.run(index)
+                return
+            }
+            random_chance -= mini_game.chance
+        }
+        
+    }
 }
 
 
@@ -285,6 +327,10 @@ const StopMiniGame = async (index) => {
         buttons[i].classList.add("btn-pointer");
         buttons[i].style.opacity = ""
     }
+
+    await delay(200)
+
+    user_turn = true
 }
 
 
@@ -392,6 +438,7 @@ const DoPostRoundActivities = () => {
     if (level in level_improvements) {
         level_improvements[level]()
     }
+    game_on = false
 }
 
 
@@ -428,32 +475,33 @@ const HandleUserClick = (index) => {
     }, 500);
 
     user_sequence.push(index);
- 
-    const current_step = user_sequence.length - 1;
+    if (!catch_num_on) {
+        const current_step = user_sequence.length - 1;
     
-    start_btn.innerText = "Next"
+        start_btn.innerText = "Next"
 
-    game_on = false
+        TryToStartMiniGame(mini_game_chance, index)
 
-    if (user_sequence[current_step] != game_sequence[current_step]){
-        user_turn = false
-        ShowVictory(false)
-        HideScore()
-        seq_len = 1
-        level = 1;
-        DoPostRoundActivities()
-        return;
-    }
+        if (user_sequence[current_step] != game_sequence[current_step]){
+            user_turn = false
+            ShowVictory(false)
+            HideScore()
+            seq_len = 1
+            level = 1;
+            DoPostRoundActivities()
+            return;
+        }
 
-    if (user_sequence.length === game_sequence.length){
-        user_turn = false;
-        ShowVictory(true)
-        ShowScore()
-        seq_len++
-        level++;
-        score += adding_score;
-        DoPostRoundActivities()
-        return;
+        if (user_sequence.length === game_sequence.length){
+            user_turn = false;
+            ShowVictory(true)
+            ShowScore()
+            seq_len++
+            level++;
+            score += adding_score;
+            DoPostRoundActivities()
+            return;
+        }
     }
 };
 
