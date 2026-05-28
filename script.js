@@ -24,22 +24,21 @@ let mini_games_chances = [
 let buttons_Listeners = []
 
 const level_improvements = {
-    5: () => {
+    3: () => {
         catch_num_btn = new_games_adding_btns[0]
         catch_num_btn.style.display = "block"
         catch_num_btn.addEventListener("click", () => {
-            mini_games_chances[0].chance = 50
+            mini_games_chances[0].chance = 30
             seq_len = 2
             catch_num_btn.style.display = "none"
-            mini_game_chance = 30
         })
     },
-    10: () => {
+    5: () => {
         pacman_btn = new_games_adding_btns[1]
         pacman_btn.style.display = "block"
         pacman_btn.addEventListener("click", () => {
-            mini_games_chances[1].chance = 30
-            seq_len = 3
+            mini_games_chances[1].chance = 10
+            seq_len = 2
             pacman_btn.style.display = "none"
         })
     }
@@ -262,7 +261,7 @@ const pacmanGrid = [
 ];
 
 
-let pacman_coords = [1, 9]
+let pacman_coords = [1, 1]
 let prev_pacman_coords = []
 let target_coords = []
 
@@ -281,11 +280,11 @@ const GeneratePossibleTargetCoords = () => {
 }
 
 
-let possible_target_coords = GeneratePossibleTargetCoords()
+let possible_coords = GeneratePossibleTargetCoords()
 
 
 const GeneratePacmanTarget = (_pacman_bg) => {
-    target_coords = possible_target_coords[Math.floor(Math.random() * possible_target_coords.length)]
+    target_coords = possible_coords[Math.floor(Math.random() * possible_coords.length)]
     _pacman_bg.children[(target_coords[1]) * 10 + (target_coords[0])].style.backgroundColor = "red"
 }
 
@@ -341,9 +340,17 @@ const StopPacman = async (index, _pacman_bg) => {
 
 
 const Pacman = async (index) => {
+    HideButtonsExcept(buttons, index)
     const parentBtn = buttons[index]
     const pacman_bg = document.createElement("div")
     pacman_bg.classList.add("pacman-bg")
+
+    while (true) {
+        pacman_coords = possible_coords[Math.floor(Math.random() * possible_coords.length)]
+        if (pacman_coords[0] != target_coords[0] || pacman_coords[1] != target_coords[1]) {
+            break
+        }
+    }
     
 
     pacmanGrid.forEach((row) => {
@@ -437,6 +444,7 @@ const DoPostRoundActivities = () => {
     DisableButtons()
     if (level in level_improvements) {
         level_improvements[level]()
+        mini_game_chance = 30
     }
     game_on = false
 }
