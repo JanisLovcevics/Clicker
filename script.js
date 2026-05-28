@@ -468,6 +468,32 @@ const ShowSequence = async () => {
 };
 
 
+const checkRoundWin = () => {
+    const current_step = user_sequence.length - 1;
+    
+    if (user_sequence[current_step] != game_sequence[current_step]){
+        user_turn = false
+        ShowVictory(false)
+        HideScore()
+        seq_len = 1
+        level = 1;
+        DoPostRoundActivities()
+        return;
+    }
+
+    if (user_sequence.length === game_sequence.length){
+        user_turn = false;
+        ShowVictory(true)
+        ShowScore()
+        seq_len++
+        level++;
+        score += adding_score;
+        DoPostRoundActivities()
+        return;
+    }
+}
+
+
 const HandleUserClick = (index) => {
     if (!user_turn) {
         return;
@@ -484,32 +510,11 @@ const HandleUserClick = (index) => {
 
     user_sequence.push(index);
     if (!catch_num_on) {
-        const current_step = user_sequence.length - 1;
-    
         start_btn.innerText = "Next"
 
+        checkRoundWin()
+
         TryToStartMiniGame(mini_game_chance, index)
-
-        if (user_sequence[current_step] != game_sequence[current_step]){
-            user_turn = false
-            ShowVictory(false)
-            HideScore()
-            seq_len = 1
-            level = 1;
-            DoPostRoundActivities()
-            return;
-        }
-
-        if (user_sequence.length === game_sequence.length){
-            user_turn = false;
-            ShowVictory(true)
-            ShowScore()
-            seq_len++
-            level++;
-            score += adding_score;
-            DoPostRoundActivities()
-            return;
-        }
     }
 };
 
