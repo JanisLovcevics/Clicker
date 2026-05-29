@@ -300,7 +300,12 @@ const CreateRectangle = (color) => {
 
 
 const StopMiniGame = async (index) => {
-    checkRoundWin()
+    mini_game_on = false
+
+    if (round_win) {
+        DoPostWinActivities()
+        round_win = false
+    }
 
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].style.opacity = "0"
@@ -326,13 +331,19 @@ const StopMiniGame = async (index) => {
         } else {
             buttons[i].classList.remove("btn-stretch");
         }
-        buttons[i].classList.add("btn-pointer");
+        if(user_sequence.length < game_sequence.length){
+            buttons[i].classList.add("btn-pointer");
+        }
         buttons[i].style.opacity = ""
     }
 
     await delay(200)
 
-    user_turn = true
+    if (user_sequence.length < game_sequence.length){
+        user_turn = true
+    }
+
+    console.log(user_turn)
 }
 
 
@@ -473,31 +484,35 @@ const ShowSequence = async () => {
 };
 
 
-const checkRoundWin = () => {
-    const current_step = user_sequence.length - 1;
-    
-    if (user_sequence[current_step] != game_sequence[current_step]){
-        user_turn = false
-        ShowVictory(false)
-        HideScore()
-        seq_len = 1
-        level = 1;
-        DoPostRoundActivities()
-        return;
-    }
-
-    if (user_sequence.length === game_sequence.length){
-        user_turn = false;
-        ShowVictory(true)
-        ShowScore()
-        seq_len++
-        level++;
-        score += adding_score;
-        DoPostRoundActivities()
-        return;
-    }
+const DoPostLossActivities = () => {
+    user_turn = false
+    ShowVictory(false)
+    HideScore()
+    seq_len = 1
+    level = 1;
+    DoPostRoundActivities()
+    return;
 }
 
+
+const DoPostWinActivities = () => {
+    user_turn = false;
+    ShowVictory(true)
+    ShowScore()
+    seq_len++
+    level++;
+    score += adding_score;
+    DoPostRoundActivities()
+    return;
+}
+
+
+const checkRoundWin = () => {
+
+}
+
+
+let round_win = false;
 
 const HandleUserClick = (index) => {
     if (!user_turn) {
@@ -512,14 +527,28 @@ const HandleUserClick = (index) => {
     setTimeout(() => {
        DeactivateButton(index);
     }, 500);
-
-    TryToStartMiniGame(mini_game_chance, index)
     
     start_btn.innerText = "Next"
 
     user_sequence.push(index);
-    if (!mini_game_on) {
-        checkRoundWin()
+
+    const current_input = user_sequence.length - 1;
+
+
+    if (user_sequence[current_input] != game_sequence[current_input]){
+        DoPostLossActivities()
+        return
+    }
+
+    TryToStartMiniGame(mini_game_chance, index)
+
+    if (user_sequence.length === game_sequence.length){
+        if (!mini_game_on){
+            DoPostWinActivities()
+        }
+        else {
+            round_win = true
+        }
     }
 };
 
