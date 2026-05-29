@@ -354,8 +354,6 @@ const StopMiniGame = async (index) => {
     if (user_sequence.length < game_sequence.length){
         user_turn = true
     }
-
-    console.log(user_turn)
 }
 
 
@@ -490,24 +488,29 @@ const ShooterGame = (index) => {
     HideButtonsExcept(buttons, index)
     const parentBtn = buttons[index]
 
-    const btnRect = parentBtn.getBoundingClientRect();
-    const parentRect = btns_bg.getBoundingClientRect();
+    const shooter_bg = document.createElement("div")
+    shooter_bg.style = "width: 100% ; height : 100% ; background-color: gray ; border-radius: 40px"
+    parentBtn.append(shooter_bg)
 
-    maxX = parentRect.left - btnRect.left + btnRect.width
-    maxY = parentRect.top - btnRect.top + btnRect.height
+    const btnRect = shooter_bg.getBoundingClientRect();
+    const parentRect = parentBtn.getBoundingClientRect();
+
+    maxX = btnRect.left - parentRect.left + btnRect.width
+    maxY = btnRect.top - parentRect.top + btnRect.height
 
     target_count = Math.floor(Math.random() * 10) + 1
 
     for (let i = 0; i < target_count; i++) {
         const target = document.createElement("div")
         target.classList.add("shooter-target")
-        target.style.left = Math.random() * maxX
-        target.style.top = Math.random() * maxY
-        parentBtn.append(target)
+        target.style.left = (Math.random() * maxX) + "px"
+        target.style.top = (Math.random() * maxY) + "px"
+        shooter_bg.append(target)
         target.addEventListener("mousedown", () => {
             target_count -= 1
             target.remove()
             if (target_count <= 0) {
+                shooter_bg.remove()
                 StopMiniGame(index)
             }
         })
@@ -564,11 +567,6 @@ const DoPostWinActivities = () => {
     score += adding_score;
     DoPostRoundActivities()
     return;
-}
-
-
-const checkRoundWin = () => {
-
 }
 
 
