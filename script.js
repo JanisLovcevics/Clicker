@@ -8,7 +8,7 @@ let user_sequence = [];
 let game_sequence = [];
 let user_turn = false;
 let game_on = false
-let catch_num_on = false
+let mini_game_on = false
 let mini_game_chance = 0
 let mini_games_chances = [
     {run : (index) => {
@@ -226,6 +226,7 @@ const TryToStartMiniGame = (chance, index) => {
         for (let mini_game of mini_games_chances) {
             if (random_chance < mini_game.chance) {
                 mini_game.run(index)
+                mini_game_on = true
                 return
             }
             random_chance -= mini_game.chance
@@ -244,7 +245,7 @@ const Directions = Object.freeze({
 })
 
 
-let pacman_direction = Directions.RIGHT
+let pacman_direction = Directions.NONE
 
 
 const pacmanGrid = [
@@ -299,6 +300,8 @@ const CreateRectangle = (color) => {
 
 
 const StopMiniGame = async (index) => {
+    checkRoundWin()
+
     for (let i = 0; i < buttons.length; i++) {
         buttons[i].style.opacity = "0"
     }
@@ -419,6 +422,8 @@ const MovePacman = () => {
         case (Directions.RIGHT):
             next_pacman_coords[0] += 1
             break
+        case (Directions.NONE):
+            break
     }
     if (next_pacman_coords[0] > 9 || next_pacman_coords[1] > 9 || next_pacman_coords[0] < 0 || next_pacman_coords[1] < 0 || pacmanGrid[next_pacman_coords[1]][next_pacman_coords[0]] == 1){
         return
@@ -508,13 +513,13 @@ const HandleUserClick = (index) => {
        DeactivateButton(index);
     }, 500);
 
+    TryToStartMiniGame(mini_game_chance, index)
+    
+    start_btn.innerText = "Next"
+
     user_sequence.push(index);
-    if (!catch_num_on) {
-        start_btn.innerText = "Next"
-
+    if (!mini_game_on) {
         checkRoundWin()
-
-        TryToStartMiniGame(mini_game_chance, index)
     }
 };
 
