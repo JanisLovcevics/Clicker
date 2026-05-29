@@ -16,6 +16,9 @@ let mini_games_chances = [
     }, chance : 0},
     {run : (index) => {
         Pacman(index)
+    }, chance : 0},
+    {run : (index) => {
+        ShooterGame(index)
     }, chance : 0}
 ]
 
@@ -25,7 +28,7 @@ let buttons_Listeners = []
 
 const level_improvements = {
     3: () => {
-        catch_num_btn = new_games_adding_btns[0]
+        const catch_num_btn = new_games_adding_btns[0]
         catch_num_btn.style.display = "block"
         catch_num_btn.addEventListener("click", () => {
             mini_games_chances[0].chance = 30
@@ -34,12 +37,21 @@ const level_improvements = {
         })
     },
     5: () => {
-        pacman_btn = new_games_adding_btns[1]
+        const pacman_btn = new_games_adding_btns[1]
         pacman_btn.style.display = "block"
         pacman_btn.addEventListener("click", () => {
             mini_games_chances[1].chance = 10
             seq_len = 2
             pacman_btn.style.display = "none"
+        })
+    },
+    2: () => {
+        const shooter_btn = new_games_adding_btns[2]
+        shooter_btn.style.display = "block"
+        shooter_btn.addEventListener("click", () => {
+            mini_games_chances[2].chance = 50
+            seq_len = 2
+            shooter_btn.style.display = "none"
         })
     }
 }
@@ -381,22 +393,29 @@ const Pacman = async (index) => {
     })
 
     parentBtn.prepend(pacman_bg)
-    DrawPacman(pacman_bg)
     GeneratePacmanTarget(pacman_bg)
 
     document.addEventListener('keydown', (event) => {
         switch (event.code){
             case ("KeyW"):
-                pacman_direction = Directions.UP
+                if (CheckIfPacmanCanMove(CountNextPacmanCoords(Directions.UP))){
+                    pacman_direction = Directions.UP
+                }
                 break
             case ("KeyS"):
-                pacman_direction = Directions.DOWN
+                if (CheckIfPacmanCanMove(CountNextPacmanCoords(Directions.DOWN))){
+                    pacman_direction = Directions.DOWN
+                }
                 break
             case ("KeyA"):
-                pacman_direction = Directions.LEFT
+                if (CheckIfPacmanCanMove(CountNextPacmanCoords(Directions.LEFT))){
+                    pacman_direction = Directions.LEFT
+                }
                 break
             case ("KeyD"):
-                pacman_direction = Directions.RIGHT
+                if (CheckIfPacmanCanMove(CountNextPacmanCoords(Directions.RIGHT))){
+                    pacman_direction = Directions.RIGHT
+                }
                 break
             default:
                 pacman_direction = Directions.NONE
@@ -417,26 +436,38 @@ const Pacman = async (index) => {
 }
 
 
-const MovePacman = () => {
-    prev_pacman_coords = [...pacman_coords]
-    next_pacman_coords = [...pacman_coords]
-    switch (pacman_direction){
+const CheckIfPacmanCanMove = (coords) => {
+    if (coords[0] > 9 || coords[1] > 9 || coords[0] < 0 || coords[1] < 0 || pacmanGrid[coords[1]][coords[0]] == 1){
+        return false
+    }
+    return true
+}
+
+
+const CountNextPacmanCoords = (direction) => {
+    let next_coords = [...pacman_coords]
+    switch (direction){
         case (Directions.UP) :
-            next_pacman_coords[1] -= 1
+            next_coords[1] -= 1
             break
         case (Directions.DOWN):
-            next_pacman_coords[1] += 1
+            next_coords[1] += 1
             break
         case (Directions.LEFT):
-            next_pacman_coords[0] -= 1
+            next_coords[0] -= 1
             break
         case (Directions.RIGHT):
-            next_pacman_coords[0] += 1
-            break
-        case (Directions.NONE):
+            next_coords[0] += 1
             break
     }
-    if (next_pacman_coords[0] > 9 || next_pacman_coords[1] > 9 || next_pacman_coords[0] < 0 || next_pacman_coords[1] < 0 || pacmanGrid[next_pacman_coords[1]][next_pacman_coords[0]] == 1){
+    return next_coords
+}
+
+
+const MovePacman = () => {
+    prev_pacman_coords = [...pacman_coords]
+    next_pacman_coords = CountNextPacmanCoords(pacman_direction)
+    if (!CheckIfPacmanCanMove(next_pacman_coords)){
         return
     }
     else {
@@ -452,6 +483,35 @@ const DrawPacman = (_pacman_bg) => {
     const rects = _pacman_bg.children[(pacman_coords[1]) * 10 + (pacman_coords[0])]
     rects.style.backgroundColor = "yellow"
     rects.classList.add("pacman")
+}
+
+
+const ShooterGame = (index) => {
+    HideButtonsExcept(buttons, index)
+    const parentBtn = buttons[index]
+
+    const btnRect = parentBtn.getBoundingClientRect();
+    const parentRect = btns_bg.getBoundingClientRect();
+
+    maxX = parentRect.left - btnRect.left + btnRect.width
+    maxY = parentRect.top - btnRect.top + btnRect.height
+
+    target_count = Math.floor(Math.random() * 10) + 1
+
+    for (let i = 0; i < target_count; i++) {
+        const target = document.createElement("div")
+        target.classList.add("shooter-target")
+        target.style.left = Math.random() * maxX
+        target.style.top = Math.random() * maxY
+        parentBtn.append(target)
+        target.addEventListener("mousedown", () => {
+            target_count -= 1
+            target.remove()
+            if (target_count <= 0) {
+                StopMiniGame(index)
+            }
+        })
+    }
 }
 
 
