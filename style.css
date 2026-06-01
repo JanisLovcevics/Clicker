@@ -231,10 +231,49 @@ body {
     border-radius: 50%;
 }
 
-.shooter-target {
+/*.shooter-target {
     position: absolute;
     width: 100px;
     height: 100px;
     border-radius: 50%;
     background-color: red;
+}*/
+
+/* style.css */
+
+.shooter-target {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    
+    background: repeating-radial-gradient(
+        circle,
+        #ff4b4b,
+        #ff4b4b 15px,
+        #ffffff 15px,
+        #ffffff 30px
+    );
+    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    cursor: crosshair;
+    z-index: 10;
+}
+
+@keyframes targetSpawn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    80% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.shooter-target:hover {
+    filter: brightness(1.1);
 }

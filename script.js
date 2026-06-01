@@ -45,11 +45,11 @@ const level_improvements = {
             pacman_btn.style.display = "none"
         })
     },
-    2: () => {
+    7: () => {
         const shooter_btn = new_games_adding_btns[2]
         shooter_btn.style.display = "block"
         shooter_btn.addEventListener("click", () => {
-            mini_games_chances[2].chance = 50
+            mini_games_chances[2].chance = 20
             seq_len = 2
             shooter_btn.style.display = "none"
         })
@@ -484,7 +484,7 @@ const DrawPacman = (_pacman_bg) => {
 }
 
 
-const ShooterGame = (index) => {
+/*const ShooterGame = (index) => {
     HideButtonsExcept(buttons, index)
     const parentBtn = buttons[index]
 
@@ -495,18 +495,84 @@ const ShooterGame = (index) => {
     const btnRect = shooter_bg.getBoundingClientRect();
     const parentRect = parentBtn.getBoundingClientRect();
 
-    maxX = btnRect.left - parentRect.left + btnRect.width
-    maxY = btnRect.top - parentRect.top + btnRect.height
+    maxX = btnRect.width - 50
+    maxY = btnRect.height - 50
 
     target_count = Math.floor(Math.random() * 10) + 1
 
     for (let i = 0; i < target_count; i++) {
         const target = document.createElement("div")
         target.classList.add("shooter-target")
-        target.style.left = (Math.random() * maxX) + "px"
-        target.style.top = (Math.random() * maxY) + "px"
+        target.style.left = (Math.random() * (50 + maxX) + 50) + "px"
+        target.style.top = (Math.random() * (50 + maxY) + 50) + "px"
         shooter_bg.append(target)
         target.addEventListener("mousedown", () => {
+            target_count -= 1
+            target.remove()
+            if (target_count <= 0) {
+                shooter_bg.remove()
+                StopMiniGame(index)
+            }
+        })
+    }
+}*/
+
+// script.js
+
+const ShooterGame = (index) => {
+    HideButtonsExcept(buttons, index)
+    const parentBtn = buttons[index]
+
+    const shooter_bg = document.createElement("div")
+    shooter_bg.style = "width: 100%; height: 100%; border-radius: 40px; position: relative;"
+    parentBtn.append(shooter_bg)
+
+    const targetSize = 100;
+    
+    const finalWidth = btns_bg.offsetWidth;
+    const finalHeight = btns_bg.offsetHeight;
+
+    let target_count = Math.floor(Math.random() * 5) + 3;
+    const positions = [];
+
+    for (let i = 0; i < target_count; i++) {
+        const target = document.createElement("div")
+        target.classList.add("shooter-target")
+
+        let randX, randY, absX, absY;
+        let isOverlapping;
+        let attempts = 0;
+
+        do {
+            isOverlapping = false;
+            randX = Math.random();
+            randY = Math.random();
+
+            absX = randX * (finalWidth - targetSize);
+            absY = randY * (finalHeight - targetSize);
+
+            for (let pos of positions) {
+                const dx = absX - pos.x;
+                const dy = absY - pos.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < targetSize) {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+            attempts++;
+        } while (isOverlapping && attempts < 50);
+
+        positions.push({ x: absX, y: absY });
+
+        target.style.left = `calc(${randX * 100}% - ${randX * targetSize}px)`
+        target.style.top = `calc(${randY * 100}% - ${randY * targetSize}px)`
+
+        shooter_bg.append(target)
+        
+        target.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
             target_count -= 1
             target.remove()
             if (target_count <= 0) {
