@@ -25,7 +25,7 @@ let mini_games_chances = [
 
 let buttons_Listeners = []
 
-const level_improvements = {
+const new_mini_games = {
     3: () => {
         const catch_num_btn = new_games_adding_btns[0]
         catch_num_btn.style.display = "block"
@@ -542,8 +542,8 @@ const ShooterGame = (index) => {
 const DoPostRoundActivities = () => {
     SetButtonsBackground(user_turn)
     DisableButtons()
-    if (level in level_improvements) {
-        level_improvements[level]()
+    if (level in new_mini_games) {
+        new_mini_games[level]()
         mini_game_chance = 30
     }
     game_on = false
