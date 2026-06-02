@@ -45,7 +45,7 @@ const level_improvements = {
             pacman_btn.style.display = "none"
         })
     },
-    7: () => {
+    2: () => {
         const shooter_btn = new_games_adding_btns[2]
         shooter_btn.style.display = "block"
         shooter_btn.addEventListener("click", () => {
@@ -483,41 +483,6 @@ const DrawPacman = (_pacman_bg) => {
     rects.classList.add("pacman")
 }
 
-
-/*const ShooterGame = (index) => {
-    HideButtonsExcept(buttons, index)
-    const parentBtn = buttons[index]
-
-    const shooter_bg = document.createElement("div")
-    shooter_bg.style = "width: 100% ; height : 100% ; background-color: gray ; border-radius: 40px"
-    parentBtn.append(shooter_bg)
-
-    const btnRect = shooter_bg.getBoundingClientRect();
-    const parentRect = parentBtn.getBoundingClientRect();
-
-    maxX = btnRect.width - 50
-    maxY = btnRect.height - 50
-
-    target_count = Math.floor(Math.random() * 10) + 1
-
-    for (let i = 0; i < target_count; i++) {
-        const target = document.createElement("div")
-        target.classList.add("shooter-target")
-        target.style.left = (Math.random() * (50 + maxX) + 50) + "px"
-        target.style.top = (Math.random() * (50 + maxY) + 50) + "px"
-        shooter_bg.append(target)
-        target.addEventListener("mousedown", () => {
-            target_count -= 1
-            target.remove()
-            if (target_count <= 0) {
-                shooter_bg.remove()
-                StopMiniGame(index)
-            }
-        })
-    }
-}*/
-
-// script.js
 
 const ShooterGame = (index) => {
     HideButtonsExcept(buttons, index)
