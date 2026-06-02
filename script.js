@@ -2,7 +2,6 @@ let level = 1;
 let seq_len = 1;
 let score = 0;
 
-let adding_score = 1;
 
 let user_sequence = [];
 let game_sequence = [];
@@ -68,23 +67,14 @@ const start_btn = document.getElementById("start-btn")
 
 const AddEventToButtons = (_buttons) => {
     for (let i = 0; i < _buttons.length; i++) {
-        const clickHandler = () => {
-            HandleUserClick(i);
-        }
-    
-        buttons_Listeners[i] = clickHandler
         
-        _buttons[i].addEventListener("click", clickHandler)
+        _buttons[i].addEventListener("click", () => {
+            HandleUserClick(i)
+        })
     }
 }
 
 AddEventToButtons(buttons)
-
-const RemoveEventFromButtons = (_buttons) => {
-    for (let i = 0; i < _buttons.length; i++) {
-        _buttons[i].removeEventListener("click", buttons_Listeners[i])
-    }
-}
 
 
 const SetButtonsBackground = (status) => {
@@ -198,7 +188,8 @@ const HideButtonsExcept = (_buttons, index) => {
 
 
 const CatchNumber = (index) => {
-    const ClickButtonInCatchNumber = async () => {
+    const ClickButtonInCatchNumber = () => {
+
         FastClickButton(index);
         setTimeout(() => {
             DeactivateButton(index);
@@ -536,8 +527,7 @@ const ShooterGame = (index) => {
 
         shooter_bg.append(target)
         
-        target.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
+        target.addEventListener("mousedown", () => {
             target_count -= 1
             target.remove()
             if (target_count <= 0) {
@@ -595,7 +585,6 @@ const DoPostWinActivities = () => {
     ShowScore()
     seq_len++
     level++;
-    score += adding_score;
     DoPostRoundActivities()
     return;
 }
