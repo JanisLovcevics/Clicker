@@ -36,21 +36,21 @@ const level_improvements = {
         })
     },
     5: () => {
-        const pacman_btn = new_games_adding_btns[1]
-        pacman_btn.style.display = "block"
-        pacman_btn.addEventListener("click", () => {
-            mini_games_chances[1].chance = 10
-            seq_len = 2
-            pacman_btn.style.display = "none"
-        })
-    },
-    2: () => {
         const shooter_btn = new_games_adding_btns[2]
         shooter_btn.style.display = "block"
         shooter_btn.addEventListener("click", () => {
             mini_games_chances[2].chance = 20
             seq_len = 2
             shooter_btn.style.display = "none"
+        })
+    },
+    7: () => {
+        const pacman_btn = new_games_adding_btns[1]
+        pacman_btn.style.display = "block"
+        pacman_btn.addEventListener("click", () => {
+            mini_games_chances[1].chance = 10
+            seq_len = 2
+            pacman_btn.style.display = "none"
         })
     }
 }
@@ -60,7 +60,7 @@ let buttons_statuses = [true, true, true, true]
 const new_games_adding_btns = document.querySelector(".improvements").children
 const buttons = document.getElementsByClassName("click-btn");
 const btns_bg = document.querySelector(".btns-bg")
-const victory_div = document.getElementById("victory-div")
+const info_div = document.getElementById("victory-div")
 const score_div = document.getElementById("score-div")
 const start_btn = document.getElementById("start-btn")
 
@@ -556,6 +556,7 @@ const ShowSequence = async () => {
     game_sequence = GenerateSequence();
     await delay(200);
     for (let i = 0; i < game_sequence.length; i++) {
+        info_div.innerText = "Buttons left: " + (i + 1)
         ActivateButton(game_sequence[i]);
         await delay(500);
         DeactivateButton(game_sequence[i]);
@@ -586,6 +587,7 @@ const DoPostWinActivities = () => {
     seq_len++
     level++;
     DoPostRoundActivities()
+    start_btn.innerText = "Next"
     return;
 }
 
@@ -605,10 +607,10 @@ const HandleUserClick = (index) => {
     setTimeout(() => {
        DeactivateButton(index);
     }, 500);
-    
-    start_btn.innerText = "Next"
 
     user_sequence.push(index);
+
+    info_div.innerText = "Buttons left: " + (game_sequence.length - user_sequence.length)
 
     const current_input = user_sequence.length - 1;
 
@@ -633,16 +635,19 @@ const HandleUserClick = (index) => {
 
 const ShowVictory = (isWin) => {
     if (isWin){
-    victory_div.innerText = "You Win"
+    info_div.innerText = "You Win"
     }
     else {
-        victory_div.innerText = "You Lose"
+        info_div.innerText = "You Lose"
         start_btn.innerText = "Retry"
     }
 }
 
 
 start_btn.addEventListener("click", () => {
+    if (start_btn.textContent == "Retry") {
+        location.reload()
+    }
     if (!game_on){
         ShowSequence()
         game_on = true
