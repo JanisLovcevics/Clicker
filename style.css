@@ -162,6 +162,10 @@ body {
     transform: scale(1.03);
 }
 
+.btn-hide {
+    opacity: 0;
+}
+
 .btn-stretch {
     transition: 0.5s;
     top: 0 !important;
