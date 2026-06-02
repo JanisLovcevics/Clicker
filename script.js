@@ -510,7 +510,7 @@ const ShooterGame = (index) => {
             for (let pos of positions) {
                 const dx = absX - pos.x;
                 const dy = absY - pos.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distance = Math.sqrt(dx**2 + dy**2);
                 
                 if (distance < targetSize) {
                     isOverlapping = true;
